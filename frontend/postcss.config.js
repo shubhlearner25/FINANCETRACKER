@@ -1,6 +1,10 @@
+// PostCSS configuration with Tailwind and Autoprefixer
 export default {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    // Tailwind CSS processor
+    tailwindcss: () => ({}),
+
+    // Automatically add vendor prefixes
+    autoprefixer: () => ({}),
   },
-}
+};

@@ -1,10 +1,14 @@
+// TailwindCSS configuration file
 /** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: 'class',
+
+const config = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './index.html',
+    './src/**/*.{jsx,tsx,js,ts}',
   ],
+
+  darkMode: 'class',
+
   theme: {
     extend: {
       fontFamily: {
@@ -12,5 +16,8 @@ export default {
       },
     },
   },
+
   plugins: [],
-}
+};
+
+export default config;
