@@ -6,7 +6,7 @@ export default function NotFound() {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-montserrat">
             <header className="py-4 px-8 flex justify-between items-center bg-white dark:bg-gray-800 shadow-md">
-                <Link to="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">Paisable</Link>
+                <Link to="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">Finaance Tracker</Link>
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
                 </div>

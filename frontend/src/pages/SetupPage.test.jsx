@@ -68,7 +68,7 @@ describe('SetupPage', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Welcome to Paisable!')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Finaance Tracker!')).toBeInTheDocument();
     expect(screen.getByText('Welcome, test@example.com! Let\'s set up your account.')).toBeInTheDocument();
     expect(screen.getByText('Choose your default currency')).toBeInTheDocument();
     expect(screen.getByText('Save and Continue')).toBeInTheDocument();

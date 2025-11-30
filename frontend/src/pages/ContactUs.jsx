@@ -63,8 +63,8 @@ const ContactUs = () => {
       ),
       title: "Email Us",
       description: "Send us an email anytime",
-      details: "support@paisable.com",
-      action: "mailto:support@paisable.com",
+      details: "support@Finaance Tracker.com",
+      action: "mailto:support@Finaance Tracker.com",
     },
     {
       icon: (
@@ -146,24 +146,24 @@ const ContactUs = () => {
 
 const faqs = [
   {
-    question: "Is my financial data secure on Paisable?",
+    question: "Is my financial data secure on Finaance Tracker?",
     answer:
-      "Yes. Paisable uses advanced encryption (AES-256) and secure HTTPS connections to protect your data. All personal and financial details are encrypted both in transit and at rest. We never share or sell your data to anyone.",
+      "Yes. Finaance Tracker uses advanced encryption (AES-256) and secure HTTPS connections to protect your data. All personal and financial details are encrypted both in transit and at rest. We never share or sell your data to anyone.",
   },
   {
-    question: "Can I scan and upload receipts using Paisable?",
+    question: "Can I scan and upload receipts using Finaance Tracker?",
     answer:
-      "Absolutely! Paisable integrates Google Gemini AI for OCR-based receipt scanning. Just upload a photo of your receipt, and the app automatically extracts merchant name, amount, and date, then categorizes it as a transaction.",
+      "Absolutely! Finaance Tracker integrates Google Gemini AI for OCR-based receipt scanning. Just upload a photo of your receipt, and the app automatically extracts merchant name, amount, and date, then categorizes it as a transaction.",
   },
   {
-    question: "Do I need to pay to use Paisable?",
+    question: "Do I need to pay to use Finaance Tracker?",
     answer:
-      "No. Paisable is completely free to use for personal finance tracking. In future, we may introduce optional premium features like multi-account analytics or AI-based financial insights.",
+      "No. Finaance Tracker is completely free to use for personal finance tracking. In future, we may introduce optional premium features like multi-account analytics or AI-based financial insights.",
   },
   {
     question: "Can I access my account from multiple devices?",
     answer:
-      "Yes. Paisable is a web-based app, so you can securely log in from any device—desktop, tablet, or mobile browser. Your data stays synced across all devices automatically.",
+      "Yes. Finaance Tracker is a web-based app, so you can securely log in from any device—desktop, tablet, or mobile browser. Your data stays synced across all devices automatically.",
   },
   {
     question: "What happens if I delete my account?",
@@ -186,7 +186,7 @@ const faqs = [
           to="/"
           className="text-2xl font-bold text-blue-600 dark:text-blue-400"
         >
-          Paisable
+          Finaance Tracker
         </Link>
         <div className="flex items-center gap-4">
           <Link
@@ -559,7 +559,7 @@ const faqs = [
                   <p className="text-blue-100">
                     Still have questions?{" "}
                     <a
-                      href="mailto:support@paisable.com"
+                      href="mailto:support@Finaance Tracker.com"
                       className="font-medium text-white hover:text-blue-200 transition-colors"
                     >
                       Email our support team
@@ -582,7 +582,7 @@ const faqs = [
 
       {/* Footer */}
       <footer className="py-8 text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800">
-        <p>&copy; {new Date().getFullYear()} Paisable. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Finaance Tracker. All Rights Reserved.</p>
       </footer>
     </div>
   );

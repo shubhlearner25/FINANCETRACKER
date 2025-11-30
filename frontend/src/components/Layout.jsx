@@ -34,7 +34,7 @@ const Layout = () => {
       className="font-bold text-xl text-blue-600 dark:text-blue-400 cursor-pointer transition-all duration-500 hover:scale-105 hover:drop-shadow-lg hover:text-blue-500 dark:hover:text-blue-300"
       title="Go to home"
     >
-      Paisable
+      Finaance Tracker
     </span>
 
               <div className="hidden lg:block">
