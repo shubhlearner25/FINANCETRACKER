@@ -43,7 +43,7 @@ export default function LoginPage() {
         className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-400 dark:to-blue-300 bg-clip-text text-transparent mb-12 transition-all duration-500 hover:scale-105 hover:drop-shadow-2xl cursor-pointer animate-fade-in" 
         title="Go to home"
       >
-        Paisable
+        Finace Tracker
       </Link>
 
       {/* Login Card */}
@@ -125,7 +125,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                New to Paisable?
+                New to Finace Tracker?
               </span>
             </div>
           </div>

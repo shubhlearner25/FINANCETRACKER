@@ -47,7 +47,7 @@ export default function WelcomePage() {
       {/* Header */}
       <header className="py-4 px-8 flex justify-between items-center bg-white dark:bg-gray-800 shadow-md">
         <Link to="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-          Paisable
+          Finance Tracker
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
@@ -67,8 +67,7 @@ export default function WelcomePage() {
 
       {/* Hero Section */}
       <main className="text-center py-20 px-4">
-        <h2 className="text-5xl font-bold text-gray-900 dark:text-white">Take Control of Your Finances</h2>
-        <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">The simple, smart, and secure way to manage your income and expenses, visualize your spending, and achieve your financial goals.</p>
+        <h2 className="text-5xl font-bold text-gray-900 dark:text-white">Simplify your money life with clear insights, easy tracking, and smarter financial decisions.</h2>
         {user ? (
           <Link to="/dashboard" className="mt-8 inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700">Go to Dashboard</Link>
         ) : (
@@ -106,7 +105,7 @@ export default function WelcomePage() {
 
       {/* Footer */}
       <footer className="py-8 text-center text-gray-500 dark:text-gray-400">
-        <p>&copy; {new Date().getFullYear()} Paisable. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Finance Tracker. All Rights Reserved.</p>
       </footer>
     </div>
   );
