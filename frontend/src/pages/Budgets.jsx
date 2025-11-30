@@ -22,6 +22,7 @@ const Budgets = () => {
         api.get('/transactions/categories/expense'),
         api.get('/transactions'),
       ]);
+
       setBudgets(budgetsRes.data);
       setCategories(categoriesRes.data);
       setTransactions(transactionsRes.data.transactions || []);
@@ -42,15 +43,19 @@ const Budgets = () => {
   };
 
   const handleCloseBudgetModal = () => {
-    setIsBudgetModalOpen(false);
     setEditingBudget(null);
+    setIsBudgetModalOpen(false);
   };
 
   const handleFormSubmit = async (formData, id) => {
     try {
-      if (id) await api.put(`/budgets/${id}`, formData);
-      else await api.post('/budgets', formData);
-      fetchData();
+      if (id) {
+        await api.put(`/budgets/${id}`, formData);
+      } else {
+        await api.post('/budgets', formData);
+      }
+
+      await fetchData();
       handleCloseBudgetModal();
     } catch (error) {
       console.error('Failed to save budget', error);
@@ -58,13 +63,13 @@ const Budgets = () => {
   };
 
   const handleDeleteBudget = async (id) => {
-    if (window.confirm('Are you sure you want to delete this budget?')) {
-      try {
-        await api.delete(`/budgets/${id}`);
-        fetchData();
-      } catch (error) {
-        console.error('Failed to delete budget', error);
-      }
+    if (!window.confirm('Are you sure you want to delete this budget?')) return;
+
+    try {
+      await api.delete(`/budgets/${id}`);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete budget', error);
     }
   };
 
@@ -85,14 +90,13 @@ const Budgets = () => {
     <>
       <div className="flex flex-wrap gap-4 justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Budgets</h1>
-        <div className="flex gap-4">
-          <button
-            onClick={() => handleOpenBudgetModal()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Add Budget
-          </button>
-        </div>
+
+        <button
+          onClick={() => handleOpenBudgetModal()}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Add Budget
+        </button>
       </div>
 
       {loading ? (
@@ -125,34 +129,33 @@ const Budgets = () => {
                 </th>
               </tr>
             </thead>
+
             <tbody className="bg-white divide-y divide-gray-200">
               {budgets.map((b) => {
                 const spent = calculateSpent(b);
                 const remaining = b.amount - spent;
-                const percent = Math.min((spent / b.amount) * 100, 100).toFixed(
-                  1
-                );
+                const percent = Math.min((spent / b.amount) * 100, 100).toFixed(1);
 
                 return (
                   <tr key={b._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {b.category}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold">{`${b.month}/${b.year}`}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                    <td className="px-6 py-4">{b.category}</td>
+                    <td className="px-6 py-4 font-semibold">{`${b.month}/${b.year}`}</td>
+                    <td className="px-6 py-4 font-semibold">
                       {new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: currency.code,
                       }).format(b.amount)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-red-600 font-semibold">
+
+                    <td className="px-6 py-4 text-red-600 font-semibold">
                       {new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: currency.code,
                       }).format(spent)}
                     </td>
+
                     <td
-                      className={`px-6 py-4 whitespace-nowrap font-semibold ${
+                      className={`px-6 py-4 font-semibold ${
                         remaining >= 0 ? 'text-green-600' : 'text-red-600'
                       }`}
                     >
@@ -161,7 +164,8 @@ const Budgets = () => {
                         currency: currency.code,
                       }).format(remaining)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap w-1/3">
+
+                    <td className="px-6 py-4 w-1/3">
                       <div className="w-full bg-gray-200 rounded-full h-3">
                         <div
                           className={`h-3 rounded-full ${
@@ -176,7 +180,15 @@ const Budgets = () => {
                       </div>
                       <span className="text-xs text-gray-500">{percent}%</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+
+                    <td className="px-6 py-4 text-right font-medium flex gap-4 justify-end">
+                      <button
+                        onClick={() => handleOpenBudgetModal(b)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        Edit
+                      </button>
+
                       <button
                         onClick={() => handleDeleteBudget(b._id)}
                         className="text-red-600 hover:text-red-900"
@@ -189,20 +201,21 @@ const Budgets = () => {
               })}
             </tbody>
           </table>
-
-          <BudgetModal
-            isOpen={isBudgetModalOpen}
-            onClose={handleCloseBudgetModal}
-            onSubmit={handleFormSubmit}
-            budget={editingBudget}
-            categories={categories}
-          />
         </div>
       ) : (
         <div className="p-6 bg-white shadow rounded-lg">
           <EmptyState message="No budgets found" />
         </div>
       )}
+
+      {/* FIX: Modal must be OUTSIDE table */}
+      <BudgetModal
+        isOpen={isBudgetModalOpen}
+        onClose={handleCloseBudgetModal}
+        onSubmit={handleFormSubmit}
+        budget={editingBudget}
+        categories={categories}
+      />
     </>
   );
 };
