@@ -1,48 +1,63 @@
-import React, { useMemo } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import React, { useMemo } from "react";
+import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
+// Register required chart components once
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const CategoryPieChart = ({ data, theme, label = 'Expenses by Category' }) => {
-  const chartData = {
-    labels: data.map(d => d.name),
-    datasets: [
-      {
-        label,
-        data: data.map(d => d.total),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.7)',
-          'rgba(54, 162, 235, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(75, 192, 192, 0.7)',
-          'rgba(153, 102, 255, 0.7)',
-          'rgba(255, 159, 64, 0.7)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-  const options = useMemo(() => {
-    const isDarkMode = theme === 'dark';
-    const textColor = isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)';
+const CategoryPieChart = ({ data = [], theme, label = "Expenses by Category" }) => {
+  // Generate dynamic color palette (instead of hardcoding)
+  const palette = useMemo(() => {
+    const baseColors = [
+      "255, 99, 132",
+      "54, 162, 235",
+      "255, 206, 86",
+      "75, 192, 192",
+      "153, 102, 255",
+      "255, 159, 64",
+    ];
 
     return {
-      cutout: '60%',
+      fill: baseColors.map((c) => `rgba(${c}, 0.7)`),
+      border: baseColors.map((c) => `rgba(${c}, 1)`),
+    };
+  }, []);
+
+  // Chart dataset
+  const chartData = useMemo(
+    () => ({
+      labels: data.map((entry) => entry.name),
+      datasets: [
+        {
+          label,
+          data: data.map((entry) => entry.total),
+          backgroundColor: palette.fill,
+          borderColor: palette.border,
+          borderWidth: 1,
+        },
+      ],
+    }),
+    [data, label, palette]
+  );
+
+  // Theme & legend styling
+  const options = useMemo(() => {
+    const dark = theme === "dark";
+    const textColor = dark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.9)";
+
+    return {
+      cutout: "60%",
       plugins: {
         legend: {
-          position: 'bottom',
+          position: "bottom",
           labels: {
             color: textColor,
-            padding: 20,
+            padding: 16,
           },
         },
       },
