@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Budget = require('../models/Budget.js');
 const IncomeExpense = require('../models/IncomeExpense.js');
-
+// code for budget controller 
 const createBudget = async (req, res) => {
     try {
         const { category, amount, month, year } = req.body;

@@ -3,7 +3,7 @@ const IncomeExpense = require("../models/IncomeExpense");
 const { GoogleGenAI } = require("@google/genai");
 
 const fs = require("fs");
-
+// code for generating receipt 
 const client = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });

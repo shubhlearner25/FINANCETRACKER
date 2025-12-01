@@ -3,6 +3,7 @@ const Papa = require('papaparse');
 // @desc    Add a new transaction
 // @route   POST /api/transactions
 // @access  Private
+//  code for adding transacation 
 const addTransaction = async (req, res) => {
   const { name, category, cost, addedOn, isIncome, note } = req.body;
 

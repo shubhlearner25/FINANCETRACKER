@@ -5,6 +5,7 @@ const Receipt = require('../models/Receipt');
 // @desc    Delete the logged-in user's account and all their data
 // @route   DELETE /api/users/account
 // @access  Private
+//  code for controlling user and all
 const deleteAccount = async (req, res) => {
   try {
     // Delete all IncomeExpense documents for the user

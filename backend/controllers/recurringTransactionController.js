@@ -1,6 +1,6 @@
 const RecurringTransaction = require('../models/RecurringTransactions');
 const { calculateNextDueDate } = require('../utils');
-
+//  code for recurring transacation and opeing modal to show up
 const createRecurringTransaction = async (req, res) => {
     const { name, category, amount, isIncome, frequency, startDate } = req.body;
 
