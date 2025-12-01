@@ -1,37 +1,63 @@
-import React from 'react';
+import React from "react";
 
-const ManageCategoriesModal = ({ isOpen, onClose, expenseCategories, incomeCategories, onDelete }) => {
-  // Pre-defined categories that should not be deleted
-  const defaultExpenseCategories = [
-    'Food', 'Shopping', 'Bills', 'Subscriptions', 'Transportation', 'Entertainment', 'Groceries', 'Miscellaneous'
+const ManageCategoriesModal = ({
+  isOpen,
+  onClose,
+  expenseCategories = [],
+  incomeCategories = [],
+  onDelete,
+}) => {
+  // Categories that cannot be removed
+  const lockedExpense = [
+    "Food",
+    "Shopping",
+    "Bills",
+    "Subscriptions",
+    "Transportation",
+    "Entertainment",
+    "Groceries",
+    "Miscellaneous",
   ];
-  const defaultIncomeCategories = [
-    'Salary',
-    'Freelance / Side Gig',
-    'Investment Returns',
-    'Gifts',
-    'Refunds'
+
+  const lockedIncome = [
+    "Salary",
+    "Freelance / Side Gig",
+    "Investment Returns",
+    "Gifts",
+    "Refunds",
   ];
 
-  // Filter out the default categories to get the user-defined list
-  const userExpenseDefinedCategories = expenseCategories.filter(cat => !defaultExpenseCategories.includes(cat));
-  const userIncomeDefinedCategories = incomeCategories.filter(cat => !defaultIncomeCategories.includes(cat));
+  // Extract only the user's custom categories
+  const customExpenses = expenseCategories.filter(
+    (cat) => !lockedExpense.includes(cat)
+  );
+  const customIncome = incomeCategories.filter(
+    (cat) => !lockedIncome.includes(cat)
+  );
 
-  const hasCustomCategories = userExpenseDefinedCategories.length > 0 || userIncomeDefinedCategories.length > 0;
+  const showAny = customExpenses.length || customIncome.length;
 
   if (!isOpen) return null;
 
-  const CategoryList = ({ title, categories }) => (
-    <div className="mb-6">
-      <h3 className="text-xl font-semibold mb-2 text-gray-700 border-b pb-1">{title}</h3>
-      {categories.length > 0 ? (
-        <ul className="divide-y divide-gray-200">
-          {categories.map(category => (
-            <li key={category} className="py-2 flex justify-between items-center">
-              <span className="text-gray-800">{category}</span>
+  /** Component for listing categories */
+  const CategoryBlock = ({ label, list }) => (
+    <section className="mb-6">
+      <h4 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1">
+        {label}
+      </h4>
+
+      {list.length > 0 ? (
+        <ul className="divide-y divide-gray-200 mt-2">
+          {list.map((cat) => (
+            <li
+              key={cat}
+              className="flex items-center justify-between py-2 text-gray-900"
+            >
+              <span>{cat}</span>
+
               <button
-                onClick={() => onDelete(category)}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+                onClick={() => onDelete(cat)}
+                className="rounded bg-red-500 px-3 py-1 text-sm text-white transition hover:bg-red-600"
               >
                 Delete
               </button>
@@ -39,35 +65,40 @@ const ManageCategoriesModal = ({ isOpen, onClose, expenseCategories, incomeCateg
           ))}
         </ul>
       ) : (
-        <p className="text-gray-500 text-sm italic">No custom categories defined for this type.</p>
+        <p className="mt-2 text-sm italic text-gray-500">
+          No custom categories added.
+        </p>
       )}
-    </div>
+    </section>
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-lg">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b pb-2">Manage Custom Categories</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl dark:bg-gray-900 dark:text-gray-100">
+        <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Manage Custom Categories
+        </h2>
 
-        {hasCustomCategories ? (
-          <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
-
-            <CategoryList
-              title="Expense Categories"
-              categories={userExpenseDefinedCategories}
-            />
-            <CategoryList
-              title="Income Categories"
-              categories={userIncomeDefinedCategories}
-            />
-
+        {/* Category Lists */}
+        {showAny ? (
+          <div className="max-h-96 space-y-6 overflow-y-auto pr-2">
+            <CategoryBlock label="Expense Categories" list={customExpenses} />
+            <CategoryBlock label="Income Categories" list={customIncome} />
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-8">You haven't added any custom categories yet.</p>
+          <p className="py-8 text-center text-gray-500 dark:text-gray-400">
+            You haven’t created any custom categories yet.
+          </p>
         )}
 
-        <div className="flex justify-end mt-6">
-          <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Close</button>
+        {/* Bottom Actions */}
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={onClose}
+            className="rounded bg-gray-300 px-4 py-2 text-sm hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
