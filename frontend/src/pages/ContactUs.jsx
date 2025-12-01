@@ -150,6 +150,11 @@ const faqs = [
     answer:
       "Yes. Finaance Tracker uses advanced encryption (AES-256) and secure HTTPS connections to protect your data. All personal and financial details are encrypted both in transit and at rest. We never share or sell your data to anyone.",
   },
+    {
+    question: "Is my financial data secure on Finaance Tracker?",
+    answer:
+      "Yes. Finaance Tracker uses advanced encryption (AES-256) and secure HTTPS connections to protect your data. All personal and financial details are encrypted both in transit and at rest. We never share or sell your data to anyone.",
+  },
   {
     question: "Can I scan and upload receipts using Finaance Tracker?",
     answer:

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import api from '../api/axios';
-import Spinner from '../components/Spinner';
-import useCurrency from '../hooks/useCurrency';
-import BudgetModal from '../components/BudgetModal';
-import EmptyState from '../components/EmptyState';
+import React, { useState, useEffect, useCallback } from "react";
+import api from "../api/axios";
+import Spinner from "../components/Spinner";
+import useCurrency from "../hooks/useCurrency";
+import BudgetModal from "../components/BudgetModal";
+import EmptyState from "../components/EmptyState";
 
 const Budgets = () => {
   const [budgets, setBudgets] = useState([]);
@@ -18,16 +18,16 @@ const Budgets = () => {
     setLoading(true);
     try {
       const [budgetsRes, categoriesRes, transactionsRes] = await Promise.all([
-        api.get('/budgets'),
-        api.get('/transactions/categories/expense'),
-        api.get('/transactions'),
+        api.get("/budgets"),
+        api.get("/transactions/categories/expense"),
+        api.get("/transactions"),
       ]);
 
       setBudgets(budgetsRes.data);
       setCategories(categoriesRes.data);
       setTransactions(transactionsRes.data.transactions || []);
     } catch (error) {
-      console.error('Failed to fetch budgets or transactions', error);
+      console.error("Failed to fetch budgets or transactions", error);
     } finally {
       setLoading(false);
     }
@@ -52,24 +52,24 @@ const Budgets = () => {
       if (id) {
         await api.put(`/budgets/${id}`, formData);
       } else {
-        await api.post('/budgets', formData);
+        await api.post("/budgets", formData);
       }
 
       await fetchData();
       handleCloseBudgetModal();
     } catch (error) {
-      console.error('Failed to save budget', error);
+      console.error("Failed to save budget", error);
     }
   };
 
   const handleDeleteBudget = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this budget?')) return;
+    if (!window.confirm("Are you sure you want to delete this budget?")) return;
 
     try {
       await api.delete(`/budgets/${id}`);
       fetchData();
     } catch (error) {
-      console.error('Failed to delete budget', error);
+      console.error("Failed to delete budget", error);
     }
   };
 
@@ -90,10 +90,9 @@ const Budgets = () => {
     <>
       <div className="flex flex-wrap gap-4 justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Budgets</h1>
-
         <button
           onClick={() => handleOpenBudgetModal()}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition"
         >
           Add Budget
         </button>
@@ -134,33 +133,35 @@ const Budgets = () => {
               {budgets.map((b) => {
                 const spent = calculateSpent(b);
                 const remaining = b.amount - spent;
-                const percent = Math.min((spent / b.amount) * 100, 100).toFixed(1);
+                const percent = Math.min((spent / b.amount) * 100, 100).toFixed(
+                  1
+                );
 
                 return (
                   <tr key={b._id}>
                     <td className="px-6 py-4">{b.category}</td>
                     <td className="px-6 py-4 font-semibold">{`${b.month}/${b.year}`}</td>
                     <td className="px-6 py-4 font-semibold">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
                         currency: currency.code,
                       }).format(b.amount)}
                     </td>
 
                     <td className="px-6 py-4 text-red-600 font-semibold">
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
                         currency: currency.code,
                       }).format(spent)}
                     </td>
 
                     <td
                       className={`px-6 py-4 font-semibold ${
-                        remaining >= 0 ? 'text-green-600' : 'text-red-600'
+                        remaining >= 0 ? "text-green-600" : "text-red-600"
                       }`}
                     >
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
                         currency: currency.code,
                       }).format(remaining)}
                     </td>
@@ -170,10 +171,10 @@ const Budgets = () => {
                         <div
                           className={`h-3 rounded-full ${
                             percent < 80
-                              ? 'bg-green-500'
+                              ? "bg-green-500"
                               : percent < 100
-                              ? 'bg-yellow-500'
-                              : 'bg-red-600'
+                              ? "bg-yellow-500"
+                              : "bg-red-600"
                           }`}
                           style={{ width: `${percent}%` }}
                         ></div>

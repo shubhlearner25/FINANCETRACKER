@@ -196,7 +196,7 @@ const DashboardPage = () => {
                   </li>
                 ))}
               </ul>
-            ) : <p className="text-gray-500 dark:text-gray-400 mt-2">No recent transactions.</p>}
+            ) : <p className="text-gray-500 dark:text-gray-400 mt-2">No recent transactions please follow up.</p>}
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-[500px]">
