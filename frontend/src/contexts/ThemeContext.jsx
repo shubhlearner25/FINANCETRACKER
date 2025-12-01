@@ -1,33 +1,36 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { updateFavicon } from '../utils/favicon';
+import React, { createContext, useEffect, useState } from "react";
+import { updateFavicon } from "../utils/favicon";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+  // Determine initial theme based on localStorage or system preference
   const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme'); // check for saved user preference
-    if (savedTheme) {
-      return savedTheme;
-    }
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    return 'light';
+    const stored = localStorage.getItem("theme");
+    if (stored) return stored;
+
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return prefersDark ? "dark" : "light";
   });
 
+  /**
+   * Apply theme changes to the DOM + persist to localStorage
+   */
   useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
+    const html = document.documentElement;
+
+    html.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+
+    // Update favicon color
     updateFavicon(theme);
   }, [theme]);
 
+  /**
+   * Flip between light and dark mode
+   */
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    setTheme((curr) => (curr === "dark" ? "light" : "dark"));
   };
 
   return (

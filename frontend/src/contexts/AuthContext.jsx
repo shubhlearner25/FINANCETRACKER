@@ -1,114 +1,164 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import api from '../api/axios';
+import React, { createContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
-  const [pendingToast, setPendingToast] = useState(null);
   const navigate = useNavigate();
 
+  // State
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [loading, setLoading] = useState(true);
+  const [queuedToast, setQueuedToast] = useState(null);
+
+  /** ----------------------------------------
+   *  Validate token on first load
+   * ---------------------------------------*/
   useEffect(() => {
-    const verifyUser = async () => {
-      const storedToken = localStorage.getItem('token');
-      if (storedToken) {
-        setToken(storedToken);
-        api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+    const initAuth = async () => {
+      const savedToken = localStorage.getItem("token");
+      if (savedToken) {
+        api.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
         try {
-          // Check if the token is valid by fetching user data
-          const response = await api.get('/auth/me');
-          setUser(response.data);
-        } catch (error) {
-          // Clear invalid token
-          console.error("Token verification failed", error);
-          localStorage.removeItem('token');
+          const res = await api.get("/auth/me");
+          setUser(res.data);
+          setToken(savedToken);
+        } catch (err) {
+          console.warn("Invalid token, clearing storage.");
+          localStorage.removeItem("token");
           setUser(null);
           setToken(null);
         }
       }
-      setLoading(false); // Finished checking
+      setLoading(false);
     };
-    verifyUser();
+
+    initAuth();
   }, []);
 
-  // Show pending toast after redirect
+  /** ----------------------------------------
+   * Trigger toast AFTER we navigate
+   * ---------------------------------------*/
   useEffect(() => {
-    if (pendingToast) {
-      toast[pendingToast.type](pendingToast.message);
-      setPendingToast(null);
+    if (queuedToast) {
+      toast[queuedToast.type](queuedToast.message);
+      setQueuedToast(null);
     }
-  }, [pendingToast]);
+  }, [queuedToast]);
 
+  /** ----------------------------------------
+   * Login handler
+   * ---------------------------------------*/
   const login = async (email, password) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token: newToken, ...userData } = response.data;
+      const res = await api.post("/auth/login", { email, password });
 
-      setToken(newToken);
-      setUser(userData);
-      localStorage.setItem('token', newToken);
-      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      const { token: accessToken, ...userDetails } = res.data;
 
-      setPendingToast({ type: 'success', message: 'Login successful!' });
-      if (!userData.isSetupComplete) {
-        navigate('/setup');
+      // Save token
+      localStorage.setItem("token", accessToken);
+      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+
+      setToken(accessToken);
+      setUser(userDetails);
+
+      setQueuedToast({
+        type: "success",
+        message: "Logged in successfully!",
+      });
+
+      // First time user → go to setup
+      if (!userDetails.isSetupComplete) {
+        navigate("/setup");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
-    } catch (error) {
-      console.error('Login failed', error.response?.data);
-      setPendingToast({ type: 'error', message: error.response?.data?.message || 'Login failed. Please try again.' });
-      throw new Error(error.response?.data?.message || 'Login failed. Please try again.');
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "Unable to login. Please try again.";
+      setQueuedToast({ type: "error", message: msg });
+      throw new Error(msg);
     }
   };
 
+  /** ----------------------------------------
+   * Signup handler
+   * ---------------------------------------*/
   const signup = async (email, password) => {
     try {
-      const response = await api.post('/auth/signup', { email, password });
-      const { token: newToken, ...userData } = response.data;
+      const res = await api.post("/auth/signup", { email, password });
 
-      setToken(newToken);
-      setUser(userData);
-      localStorage.setItem('token', newToken);
-      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      const { token: accessToken, ...userDetails } = res.data;
 
-      setPendingToast({ type: 'success', message: 'Signup successful!' });
-      navigate('/setup');
-    } catch (error) {
-      console.error('Signup failed', error.response?.data);
-      setPendingToast({ type: 'error', message: error.response?.data?.message || 'Signup failed. Please try again.' });
-      throw new Error(error.response?.data?.message || 'Signup failed. Please try again.');
+      localStorage.setItem("token", accessToken);
+      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+
+      setToken(accessToken);
+      setUser(userDetails);
+
+      setQueuedToast({
+        type: "success",
+        message: "Signup successful!",
+      });
+
+      navigate("/setup");
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "Signup failed. Please try again.";
+      setQueuedToast({ type: "error", message: msg });
+      throw new Error(msg);
     }
   };
 
+  /** ----------------------------------------
+   * Logout
+   * ---------------------------------------*/
   const logout = () => {
-    setPendingToast({ type: 'info', message: 'Logged out successfully.' });
+    localStorage.removeItem("token");
+    delete api.defaults.headers.common["Authorization"];
+
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
-    navigate('/login');
+
+    setQueuedToast({
+      type: "info",
+      message: "You have been logged out.",
+    });
+
+    navigate("/login");
   };
 
+  /** ----------------------------------------
+   * Setup onboarding (currency selection)
+   * ---------------------------------------*/
   const setup = async (defaultCurrency) => {
     try {
-      const response = await api.put('/auth/setup', { defaultCurrency });
-
-      setUser(response.data);
-
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Setup failed', error);
-      throw new Error(error.response?.data?.message || 'Setup failed. Please try again.');
+      const res = await api.put("/auth/setup", { defaultCurrency });
+      setUser(res.data);
+      navigate("/dashboard");
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        "Setup failed. Please try again later.";
+      throw new Error(msg);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, setup }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        login,
+        signup,
+        logout,
+        setup,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
