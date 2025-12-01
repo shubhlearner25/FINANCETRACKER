@@ -4,24 +4,27 @@ const { exportTransactions } = require("../controllers/transactionController");
 const IncomeExpense = require("../models/IncomeExpense");
 const Papa = require("papaparse");
 
-// Mock protect middleware
+// Simple mock for the auth middleware — attaches a fake user to the request
 const protect = (req, res, next) => {
-  req.user = { _id: "user123" }; // dummy user
+  req.user = { _id: "user123" }; 
   next();
 };
 
-// Setup express app with the route
+// Create a tiny express app that mounts only the route under test
 const app = express();
 app.get("/api/transactions/export", protect, exportTransactions);
 
+// Mock out the database model
 jest.mock("../models/IncomeExpense");
 
 describe("GET /api/transactions/export", () => {
+
+  // Reset mocks between tests so calls don’t leak across tests
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should return CSV with transactions", async () => {
+  it("returns a CSV file containing user transactions", async () => {
     const mockTransactions = [
       {
         _id: "t1",
@@ -43,6 +46,7 @@ describe("GET /api/transactions/export", () => {
       },
     ];
 
+    // Mock DB result
     IncomeExpense.find.mockReturnValueOnce({
       lean: jest.fn().mockResolvedValue(mockTransactions),
     });
@@ -53,6 +57,7 @@ describe("GET /api/transactions/export", () => {
     expect(res.headers["content-type"]).toContain("text/csv");
     expect(res.headers["content-disposition"]).toContain("paisable_transactions.csv");
 
+    // Build CSV based on what the controller should produce
     const expectedCSV = Papa.unparse(
       mockTransactions.map((t) => ({
         id: t._id,
@@ -69,7 +74,7 @@ describe("GET /api/transactions/export", () => {
     expect(res.text.trim()).toBe(expectedCSV.trim());
   });
 
-  it("should handle server errors gracefully", async () => {
+  it("returns a 500 error if database query fails", async () => {
     IncomeExpense.find.mockReturnValueOnce({
       lean: jest.fn().mockRejectedValue(new Error("DB failure")),
     });
