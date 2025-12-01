@@ -28,7 +28,7 @@ connectDB();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://paisable.netlify.app",
+  
   "https://financetracker-rosy.vercel.app"
 ];
 
