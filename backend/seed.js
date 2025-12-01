@@ -3,7 +3,7 @@ const IncomeExpense = require('./models/IncomeExpense'); // adjust path if neede
 const User = require('./models/User'); // adjust path if needed
 
 // 👇 Replace this with a valid ObjectId from your User collection
-
+// code for seedes user 
 const MONGO_URI = "mongodb://127.0.0.1:27017/paisable";
 
 mongoose.connect(MONGO_URI)

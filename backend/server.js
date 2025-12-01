@@ -7,6 +7,7 @@ const axios = require('axios');
 const cron = require('node-cron');
 require('./cron');
 
+// code fro server file to run the backend
 // import the sanitizeMiddleware
 const { sanitizeMiddleware } = require("./middleware/sanitizeMiddleware")
 
