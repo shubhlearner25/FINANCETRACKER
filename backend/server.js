@@ -30,18 +30,32 @@ const allowedOrigins = [
   "https://financetracker-rosy.vercel.app"
 ];
 
-// ⭐ FIXED CORS SETUP (DO NOT MODIFY)
+// ⭐ FIXED CORS SETUP (EXPRESS v5 SAFE, NO CRASH)
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
-// ⭐ REQUIRED FOR RENDER: Handle preflight manually
-app.options("*", cors());
+// ⭐ EXPRESS v5 SAFE — Handle preflight automatically
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // JSON parsing
 app.use(express.json());
