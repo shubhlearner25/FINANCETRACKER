@@ -51,6 +51,8 @@ const MockCurrencyProvider = ({ children }) => {
       { code: 'USD', name: 'United States Dollar', symbol: '$', flag: '🇺🇸' },
       { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
       { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
+      { code: 'INR', name: 'Indian Rupee', symbol: '₹', flag: '🇮🇳' }
+
     ],
   };
 
