@@ -1,45 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import useCurrency from '../hooks/useCurrency';
-import useAuth from '../hooks/useAuth';
+import React, { useState, useEffect } from "react";
+import useCurrency from "../hooks/useCurrency";
+import useAuth from "../hooks/useAuth";
 
 const CurrencySelector = () => {
   const { currency, changeCurrency, supportedCurrencies } = useCurrency();
   const { user } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
 
+  // Load user preference on mount
   useEffect(() => {
     if (user?.defaultCurrency) {
-      const userCurrency = supportedCurrencies.find(c => c.code === user.defaultCurrency);
-      changeCurrency(userCurrency);
+      const match = supportedCurrencies.find(
+        (item) => item.code === user.defaultCurrency
+      );
+      if (match) changeCurrency(match);
     }
-  }, [user]);
+  }, [user, supportedCurrencies]);
 
-  const handleSelect = (code) => {
+  // Selecting a currency
+  const handleCurrencyPick = (code) => {
     changeCurrency(code);
-    setIsOpen(false);
+    setOpenMenu(false);
   };
 
   return (
-    <div className="relative">
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
+    <div className="relative select-none">
+      {/* Toggle Button */}
+      <button
+        onClick={() => setOpenMenu((prev) => !prev)}
+        className="flex items-center gap-2 rounded-md bg-gray-100 px-3 py-2 text-sm font-medium hover:bg-gray-200"
       >
         <span>{currency.flag}</span>
-        <span className="font-medium text-sm">{currency.code}</span>
+        <span>{currency.code}</span>
       </button>
-      
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+
+      {/* Dropdown Panel */}
+      {openMenu && (
+        <div className="absolute right-0 mt-2 w-52 rounded-md bg-white shadow-md z-30">
           <ul className="py-1">
-            {supportedCurrencies.map(curr => (
-              <li 
-                key={curr.code} 
-                onClick={() => handleSelect(curr.code)}
-                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+            {supportedCurrencies.map((item) => (
+              <li
+                key={item.code}
+                onClick={() => handleCurrencyPick(item.code)}
+                className="flex cursor-pointer items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
-                <span>{curr.flag}</span>
-                <span>{curr.name} ({curr.code})</span>
+                <span>{item.flag}</span>
+                <span>
+                  {item.name} ({item.code})
+                </span>
               </li>
             ))}
           </ul>

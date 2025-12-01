@@ -1,16 +1,17 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import userEvent from '@testing-library/user-event';
-import CurrencySelector from './CurrencySelector';
-import { CurrencyProvider } from '../contexts/CurrencyContext';
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
+import CurrencySelector from "./CurrencySelector";
+import { CurrencyProvider } from "../contexts/CurrencyContext";
 
-// Mock localStorage
-const localStorageMock = (() => {
+// ---------- Mock LocalStorage ----------
+const mockStorage = (() => {
   let store = {};
+
   return {
-    getItem: vi.fn((key) => store[key] || null),
-    setItem: vi.fn((key, value) => {
-      store[key] = value.toString();
+    getItem: vi.fn((key) => store[key] ?? null),
+    setItem: vi.fn((key, val) => {
+      store[key] = String(val);
     }),
     clear: vi.fn(() => {
       store = {};
@@ -18,63 +19,61 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
+Object.defineProperty(window, "localStorage", {
+  value: mockStorage,
 });
 
-describe('CurrencySelector - localStorage persistence', () => {
+// =======================================
+// TEST SUITE
+// =======================================
+describe("CurrencySelector – persistence tests", () => {
   beforeEach(() => {
-    // Clear localStorage and reset mocks before each test
-    localStorageMock.clear();
-    vi.clearAllMocks();
+    mockStorage.clear();
+    vi.resetAllMocks();
   });
 
-  it('should persist currency selection to localStorage and reload it on re-render', async () => {
+  it("stores selected currency in localStorage & restores it after re-render", async () => {
     const user = userEvent.setup();
 
-    // Initial render - should show USD (default currency)
     const { unmount } = render(
       <CurrencyProvider>
         <CurrencySelector />
       </CurrencyProvider>
     );
 
-    // Verify initial currency is USD
-    expect(screen.getByText('USD')).toBeInTheDocument();
-    expect(screen.getByText('🇺🇸')).toBeInTheDocument();
+    // Check default USD
+    expect(screen.getByText("USD")).toBeInTheDocument();
+    expect(screen.getByText("🇺🇸")).toBeInTheDocument();
 
-    // Click on currency selector to open dropdown
-    const currencyButton = screen.getByRole('button');
-    await user.click(currencyButton);
+    // Open dropdown
+    await user.click(screen.getByRole("button"));
 
-    // Select INR from the dropdown
-    const inrOption = screen.getByText(/Indian Rupee \(INR\)/i);
-    await user.click(inrOption);
+    // Pick INR
+    await user.click(screen.getByText(/Indian Rupee \(INR\)/i));
 
-    // Verify localStorage.setItem was called with correct values
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('currencyCode', 'INR');
+    // LocalStorage should save the selected currency code
+    expect(mockStorage.setItem).toHaveBeenCalledWith("currencyCode", "INR");
 
-    // Verify UI updated to show INR
-    expect(screen.getByText('INR')).toBeInTheDocument();
-    expect(screen.getByText('🇮🇳')).toBeInTheDocument();
+    // UI must update
+    expect(screen.getByText("INR")).toBeInTheDocument();
+    expect(screen.getByText("🇮🇳")).toBeInTheDocument();
 
-    // Unmount the component
+    // Unmount to simulate "page reload"
     unmount();
 
-    // Re-render the component to simulate page refresh
+    // Render again (restoring stored currency)
     render(
       <CurrencyProvider>
         <CurrencySelector />
       </CurrencyProvider>
     );
 
-    // Verify the component initialized with INR from localStorage
-    expect(localStorageMock.getItem).toHaveBeenCalledWith('currencyCode');
-    expect(screen.getByText('INR')).toBeInTheDocument();
-    expect(screen.getByText('🇮🇳')).toBeInTheDocument();
+    expect(mockStorage.getItem).toHaveBeenCalledWith("currencyCode");
+    expect(screen.getByText("INR")).toBeInTheDocument();
+    expect(screen.getByText("🇮🇳")).toBeInTheDocument();
   });
 
-  it('should persist EUR selection to localStorage', async () => {
+  it("correctly saves EUR selection in localStorage", async () => {
     const user = userEvent.setup();
 
     render(
@@ -83,31 +82,22 @@ describe('CurrencySelector - localStorage persistence', () => {
       </CurrencyProvider>
     );
 
-    // Click on currency selector to open dropdown
-    const currencyButton = screen.getByRole('button');
-    await user.click(currencyButton);
+    await user.click(screen.getByRole("button"));
+    await user.click(screen.getByText(/Euro \(EUR\)/i));
 
-    // Select EUR from the dropdown
-    const eurOption = screen.getByText(/Euro \(EUR\)/i);
-    await user.click(eurOption);
-
-    // Verify localStorage.setItem was called with correct values
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('currencyCode', 'EUR');
-
-    // Verify UI updated to show EUR
-    expect(screen.getByText('EUR')).toBeInTheDocument();
-    expect(screen.getByText('🇪🇺')).toBeInTheDocument();
+    expect(mockStorage.setItem).toHaveBeenCalledWith("currencyCode", "EUR");
+    expect(screen.getByText("EUR")).toBeInTheDocument();
+    expect(screen.getByText("🇪🇺")).toBeInTheDocument();
   });
 
-  it('should default to USD when localStorage is empty', () => {
+  it("falls back to USD when storage has no previous value", () => {
     render(
       <CurrencyProvider>
         <CurrencySelector />
       </CurrencyProvider>
     );
 
-    // Verify default currency is USD
-    expect(screen.getByText('USD')).toBeInTheDocument();
-    expect(screen.getByText('🇺🇸')).toBeInTheDocument();
+    expect(screen.getByText("USD")).toBeInTheDocument();
+    expect(screen.getByText("🇺🇸")).toBeInTheDocument();
   });
 });

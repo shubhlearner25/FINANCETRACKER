@@ -7,57 +7,60 @@ import {
   Legend,
 } from "chart.js";
 
-// Register required chart components once
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const CategoryPieChart = ({ data = [], theme, label = "Expenses by Category" }) => {
-  // Generate dynamic color palette (instead of hardcoding)
+const CategoryPieChart = ({
+  data = [],
+  theme,
+  label = "Expenses by Category",
+}) => {
+  // === NEW ORANGE + WHITE COLOR PALETTE ===
   const palette = useMemo(() => {
-    const baseColors = [
-      "255, 99, 132",
-      "54, 162, 235",
-      "255, 206, 86",
-      "75, 192, 192",
-      "153, 102, 255",
-      "255, 159, 64",
+    const oranges = [
+      "255,140,0",
+      "255,99,71",
+      "255,165,0",
+      "255,179,71",
+      "255,127,80",
+      "255,200,120",
     ];
 
     return {
-      fill: baseColors.map((c) => `rgba(${c}, 0.7)`),
-      border: baseColors.map((c) => `rgba(${c}, 1)`),
+      fill: oranges.map((c) => `rgba(${c}, 0.75)`),
+      border: oranges.map((c) => `rgba(${c}, 1)`),
     };
   }, []);
 
-  // Chart dataset
+  // Build dataset
   const chartData = useMemo(
     () => ({
-      labels: data.map((entry) => entry.name),
+      labels: data.map((e) => e.name || "Unknown"),
       datasets: [
         {
           label,
-          data: data.map((entry) => entry.total),
+          data: data.map((e) => e.total || 0),
           backgroundColor: palette.fill,
           borderColor: palette.border,
-          borderWidth: 1,
+          borderWidth: 2,
         },
       ],
     }),
     [data, label, palette]
   );
 
-  // Theme & legend styling
+  // Theme-aware legend
   const options = useMemo(() => {
     const dark = theme === "dark";
-    const textColor = dark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.9)";
+    const textColor = dark ? "#ffffffd9" : "#000000d9";
 
     return {
-      cutout: "60%",
+      cutout: "55%",
       plugins: {
         legend: {
           position: "bottom",
           labels: {
             color: textColor,
-            padding: 16,
+            padding: 18,
           },
         },
       },
