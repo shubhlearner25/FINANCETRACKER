@@ -158,7 +158,7 @@ const ReceiptsPage = () => {
 				<div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
 					<form onSubmit={handleSubmit}>
 						<label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-							Select a receipt file (JPG, PNG, PDF)
+						please	Select a receipt file (JPG, PNG, PDF)
 						</label>
 						<input
 							type="file"

@@ -35,7 +35,7 @@ const SetupPage = () => {
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome to Finaance Tracker!
+          Heyy!  Welcome to Finaance Tracker!
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
             Welcome, {user.email}! Let's set up your account.

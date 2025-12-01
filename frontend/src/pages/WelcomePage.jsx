@@ -87,7 +87,7 @@ export default function WelcomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <FeatureCard icon={<ChartIcon />} title="Visualize Your Spending">
               See where your money goes with intuitive charts and graphs. 
-              Understand your habits and make smarter financial decisions.
+              Understand your habits and make smarter finance.
             </FeatureCard>
 
             <FeatureCard icon={<ReceiptIcon />} title="Effortless Receipt Scanning">

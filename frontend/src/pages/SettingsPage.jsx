@@ -39,7 +39,7 @@ const SettingsPage = () => {
       <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
         <h2 className="text-lg font-semibold text-red-600 mb-2">Danger Zone</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
-          Deleting your account is permanent. All your data will be lost.
+          Deleting your account is permanent. All your data will be lost. Are you sure
         </p>
         {error && <p className="text-red-600 mb-2">{error}</p>}
         <button

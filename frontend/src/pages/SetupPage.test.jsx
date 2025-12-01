@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import AuthContext from '../contexts/AuthContext';
 import CurrencyContext from '../contexts/CurrencyContext';
 import SetupPage from './SetupPage';
 
-// Mock useNavigate
+// Mock react-router navigate
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal();
@@ -16,28 +16,32 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-// Mock API
+// Mock axios PUT call
 vi.mock('../api/axios', () => ({
   default: {
     put: vi.fn(),
   },
 }));
 
-const MockAuthProvider = ({ children }) => {
-  const mockAuth = {
-    user: {
-      _id: '123',
-      email: 'test@example.com',
-      defaultCurrency: 'USD',
-      isSetupComplete: false,
-    },
-  };
-  return (
-    <AuthContext.Provider value={mockAuth}>
-      {children}
-    </AuthContext.Provider>
-  );
+// Common mock user
+const mockUser = {
+  _id: '123',
+  email: 'test@example.com',
+  defaultCurrency: 'USD',
+  isSetupComplete: false,
 };
+
+const MockAuthProvider = ({ children }) => (
+  <AuthContext.Provider
+    value={{
+      user: mockUser,
+      loading: false,
+      setup: vi.fn(),
+    }}
+  >
+    {children}
+  </AuthContext.Provider>
+);
 
 const MockCurrencyProvider = ({ children }) => {
   const mockCurrency = {
@@ -49,6 +53,7 @@ const MockCurrencyProvider = ({ children }) => {
       { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
     ],
   };
+
   return (
     <CurrencyContext.Provider value={mockCurrency}>
       {children}
@@ -56,8 +61,12 @@ const MockCurrencyProvider = ({ children }) => {
   );
 };
 
-describe('SetupPage', () => {
-  it('renders setup page with welcome message', () => {
+describe('SetupPage UI Tests', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
+
+  it('should render the welcome and instruction text', () => {
     render(
       <BrowserRouter>
         <MockAuthProvider>
@@ -69,12 +78,14 @@ describe('SetupPage', () => {
     );
 
     expect(screen.getByText('Welcome to Finaance Tracker!')).toBeInTheDocument();
-    expect(screen.getByText('Welcome, test@example.com! Let\'s set up your account.')).toBeInTheDocument();
+    expect(
+      screen.getByText("Welcome, test@example.com! Let's set up your account.")
+    ).toBeInTheDocument();
     expect(screen.getByText('Choose your default currency')).toBeInTheDocument();
-    expect(screen.getByText('Save and Continue')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /save and continue/i })).toBeInTheDocument();
   });
 
-  it('displays available currencies', () => {
+  it('should list all available currencies', () => {
     render(
       <BrowserRouter>
         <MockAuthProvider>

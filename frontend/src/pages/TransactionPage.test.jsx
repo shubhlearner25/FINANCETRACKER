@@ -72,6 +72,6 @@ describe("handleExportCSV", () => {
     await handleExportCSV();
 
     expect(console.error).toHaveBeenCalledWith("Failed to export CSV", error);
-    expect(window.alert).toHaveBeenCalledWith("Failed to export CSV. Please try again.");
+    expect(window.alert).toHaveBeenCalledWith("Failed to export CSV. Please try .");
   });
 });

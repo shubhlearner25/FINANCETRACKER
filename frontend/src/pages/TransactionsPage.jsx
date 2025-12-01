@@ -246,7 +246,7 @@ const TransactionsPage = () => {
             </button>
           }
           <button onClick={() => setIsCategoryModalOpen(true)} className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
-            Manage Categories
+            Manage Category
           </button>
           <button onClick={() => handleOpenTransactionModal()} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
             <span className='text-2xl'>+</span> Add Transaction

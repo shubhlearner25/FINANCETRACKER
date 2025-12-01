@@ -178,7 +178,7 @@ export default function RegisterPage() {
             {password && passwordStrength && (
               <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
                 <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                  Password Requirements:
+                  Password Requirements: content
                 </p>
                 <div className="space-y-2">
                   <PasswordCriterion met={passwordStrength.hasLength} text="8-16 characters" />
