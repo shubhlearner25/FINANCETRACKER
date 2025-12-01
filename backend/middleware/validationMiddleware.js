@@ -9,6 +9,14 @@ const validateRegistration = [
     next();
   },
   // Validate email
+  // -----------------------------------------------------------------------------
+// Middleware: Request Data Validation
+// This middleware validates incoming request data using predefined rules or
+// schemas (e.g., Joi, Yup, custom logic). It ensures required fields are present,
+// data types are correct, and invalid payloads are rejected before reaching the
+// controller. Helps maintain data integrity and prevents malformed requests.
+// -----------------------------------------------------------------------------
+
   body('email')
     .isEmail()
     .withMessage('Please enter a valid email address.')

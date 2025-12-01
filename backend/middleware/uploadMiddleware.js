@@ -8,6 +8,12 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
+// -----------------------------------------------------------------------------
+// Middleware: File Upload Validation
+// Ensures uploaded files meet required rules (type, size, format). Used mainly
+// for validating receipt image uploads. If the file is missing or invalid, the
+// middleware prevents the request from continuing and returns an error response.
+// -----------------------------------------------------------------------------
 
 // Initialize upload variable
 const upload = multer({

@@ -1,4 +1,10 @@
 const sanitizeHtml = require('sanitize-html');
+// -----------------------------------------------------------------------------
+// Middleware: Input Sanitization
+// This middleware cleans and sanitizes user input to protect the application
+// from injection attacks such as XSS, NoSQL injection, and malformed payloads.
+// It ensures incoming request data is safe before being processed by controllers.
+// -----------------------------------------------------------------------------
 
 const sanitize = (obj) => {
   if (obj && typeof obj === 'object') {

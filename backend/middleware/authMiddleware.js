@@ -1,5 +1,13 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+// Middleware: Authentication Middleware (protect)
+// -----------------------------------------------------------------------------
+// Middleware: Authentication Middleware (protect)
+// This middleware verifies JWT tokens sent from the client. It checks for a
+// valid Authorization header, decodes the token, and loads the associated user.
+// If authentication fails, the request is blocked with a 401 Unauthorized error.
+// Used to safeguard private API routes that require a logged-in user.
+// -----------------------------------------------------------------------------
 
 const protect = async (req, res, next) => {
   let token;
