@@ -14,21 +14,24 @@ const RecurringTransactions = () => {
 
   const { currency } = useCurrency();
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [recurringRes, categoriesRes] = await Promise.all([
-        api.get('/recurring'),
-        api.get('/transactions/categories'),
-      ]);
-      setRecurring(recurringRes.data || []);
-      setCategories(categoriesRes.data || []);
-    } catch (err) {
-      console.error('Failed to fetch recurring transactions', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+const fetchData = useCallback(async () => {
+  setLoading(true);
+
+  try {
+    const [recurringRes, categoriesRes] = await Promise.all([
+      api.get('/recurring'),
+      api.get('/transactions/categories/expense'), // FIXED
+    ]);
+
+    setRecurring(recurringRes.data || []);
+    setCategories(categoriesRes.data || []);
+
+  } catch (err) {
+    console.error('Failed to fetch recurring transactions', err);
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
   useEffect(() => {
     fetchData();

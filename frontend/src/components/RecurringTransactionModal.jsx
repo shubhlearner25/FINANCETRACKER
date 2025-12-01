@@ -68,7 +68,7 @@ const RecurringTransactionModal = ({
             className="p-2 border rounded w-full"
             required
           >
-            <option value="">Select Category</option>
+            <option value="">Select Categoryyyy</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}

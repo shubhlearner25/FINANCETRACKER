@@ -19,10 +19,13 @@ const ActivityBarChart = ({ expensesData = [], incomeData = [], theme }) => {
   // Define colors based on theme
   const colors = useMemo(
     () => ({
-      text: darkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.9)",
-      grid: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
-      income: darkMode ? "rgba(34, 197, 94, 0.8)" : "rgba(34, 197, 94, 0.7)",
-      expenses: darkMode ? "rgba(239, 68, 68, 0.8)" : "rgba(239, 68, 68, 0.7)",
+      text: darkMode ? "rgba(255, 180, 120, 1)" : "rgba(255, 100, 20, 1)",
+grid: darkMode ? "rgba(255, 140, 60, 0.25)" : "rgba(255, 180, 120, 0.3)",
+
+income: darkMode ? "rgba(255, 165, 0, 0.9)" : "rgba(255, 140, 0, 0.85)",
+
+expenses: darkMode ? "rgba(255, 99, 0, 0.85)" : "rgba(255, 69, 0, 0.85)",
+
     }),
     [darkMode]
   );
