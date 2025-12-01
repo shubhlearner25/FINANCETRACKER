@@ -25,10 +25,13 @@ const app = express();
 connectDB();
 
 // Whitelisted frontend origins
+
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://paisable.netlify.app"
+  "https://paisable.netlify.app",
+  "https://financetracker-rosy.vercel.app"
 ];
+
 
 // CORS setup
 app.use(
