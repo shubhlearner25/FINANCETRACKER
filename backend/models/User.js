@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+// -----------------------------------------------------------------------------
+// Model: User
+// Represents application users, storing credentials, default currency, setup
+// status, and authentication details. Used for login, secure access control,
+// and personalized user settings.
+// -----------------------------------------------------------------------------
 
 const userSchema = new mongoose.Schema({
   email: {

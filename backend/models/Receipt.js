@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+// -----------------------------------------------------------------------------
+// Model: Receipt
+// Holds uploaded receipt data along with AI-extracted details such as merchant,
+// date, amount, and category. Linked to a user and optionally connected to a
+// finalized transaction. Supports receipt storage and automated data extraction.
+// -----------------------------------------------------------------------------
 
 const receiptSchema = new mongoose.Schema({
   user: {

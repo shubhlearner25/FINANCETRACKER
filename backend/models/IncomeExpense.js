@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+// -----------------------------------------------------------------------------
+// Model: IncomeExpense
+// Stores individual financial transactions, including both income and expenses.
+// Each record tracks the amount, category, date, note, and whether it is income.
+// Used to calculate totals, generate reports, and analyze spending patterns.
+// -----------------------------------------------------------------------------
 
 const incomeExpenseSchema = new mongoose.Schema({
   user: {

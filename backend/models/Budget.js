@@ -1,4 +1,10 @@
 const mongoose = require("mongoose");
+// -----------------------------------------------------------------------------
+// Model: Budget
+// Represents a user's planned spending limit for a specific category, month,
+// and year. Used to track budgeted amounts, calculate spending progress, and
+// compute remaining balance for each budgeting period.
+// -----------------------------------------------------------------------------
 
 const budgetSchema = new mongoose.Schema(
   {

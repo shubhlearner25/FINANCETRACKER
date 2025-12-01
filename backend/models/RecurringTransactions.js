@@ -1,5 +1,11 @@
 
 const mongoose = require('mongoose');
+// -----------------------------------------------------------------------------
+// Model: RecurringTransaction
+// Defines financial transactions that repeat automatically (daily, weekly,
+// monthly, yearly). Stores the base transaction details and calculates the next
+// due date for upcoming occurrences.
+// -----------------------------------------------------------------------------
 
 const recurringTransactionSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
