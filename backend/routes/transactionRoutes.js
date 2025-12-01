@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+// Routes handling income and expense transactions including creation,
+// editing, deletion, category retrieval, and exporting transaction data.
+// Protected by authentication middleware.
 
 const {
   addTransaction,

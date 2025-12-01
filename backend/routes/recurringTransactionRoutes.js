@@ -4,6 +4,9 @@ const { createRecurringTransaction, getRecurringTransactions, deleteRecurringTra
 
 const { protect } = require('../middleware/authMiddleware');
 
+// Routes for recurring transaction management including creation,
+// retrieval, updating, and deletion of recurring financial entries.
+// Ensures authenticated users can manage automated transactions.
 
 router.route('/create').post(protect, createRecurringTransaction);
 router.route('/').get(protect, getRecurringTransactions);

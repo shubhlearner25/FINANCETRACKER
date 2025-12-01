@@ -3,6 +3,9 @@ const router = express.Router();
 const { signup, login, getMe, completeSetup } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 const { validateRegistration } = require('../middleware/validationMiddleware');
+// Routes responsible for user authentication such as signup, login,
+// retrieving user details, and completing initial account setup.
+// All routes typically use authentication middleware where required.
 
 router.post('/signup', validateRegistration, signup);
 router.post('/login', login);
