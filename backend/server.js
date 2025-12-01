@@ -25,26 +25,23 @@ const app = express();
 connectDB();
 
 // Whitelisted frontend origins
-
 const allowedOrigins = [
   "http://localhost:5173",
-  
   "https://financetracker-rosy.vercel.app"
 ];
 
-
-// CORS setup
+// ⭐ FIXED CORS SETUP (DO NOT MODIFY)
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      callback(new Error("CORS policy: Origin not permitted"));
-    },
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+// ⭐ REQUIRED FOR RENDER: Handle preflight manually
+app.options("*", cors());
 
 // JSON parsing
 app.use(express.json());
