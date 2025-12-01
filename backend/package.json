@@ -1,11 +1,12 @@
 {
-  "name": "finance-tracker",
+  "name": "finance-tracker-backend",
   "version": "1.0.0",
-  "description": "This is the backend for the Finance Tracker",
+  "description": "Backend service powering the Finance Tracker application",
+  "author": "Shubham Tiwari",
   "license": "ISC",
-  "author": "Archa",
   "type": "commonjs",
   "main": "server.js",
+
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
@@ -13,6 +14,7 @@
     "destroy": "node seeder/seeder.js -d",
     "test": "jest"
   },
+
   "dependencies": {
     "@google/genai": "^1.26.0",
     "axios": "^1.12.2",
@@ -29,6 +31,7 @@
     "papaparse": "^5.5.3",
     "sanitize-html": "^2.17.0"
   },
+
   "devDependencies": {
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.2.1",
