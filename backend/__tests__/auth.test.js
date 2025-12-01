@@ -1,4 +1,6 @@
+// Ensure tests run in test mode
 process.env.NODE_ENV = 'test';
+
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
@@ -7,169 +9,148 @@ const User = require('../models/User');
 
 let mongoServer;
 
+// Spin up an in-memory MongoDB instance before running any tests
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-  process.env.MONGO_URI = mongoUri;
-  await mongoose.connect(mongoUri, {
+  const uri = mongoServer.getUri();
+
+  process.env.MONGO_URI = uri;
+
+  await mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
 });
 
+// Clean up after all tests finish
 afterAll(async () => {
   await mongoose.disconnect();
   await mongoServer.stop();
   server.close();
 });
 
-describe('Auth API', () => {
+describe('Auth API Tests', () => {
+
+  // Reset the database before each test
   beforeEach(async () => {
     await User.deleteMany({});
   });
 
-  it('should allow a new user to sign up', async () => {
+  it('creates a new user via signup', async () => {
     const newUser = {
       email: 'testuser@gmail.com',
       password: 'Password123!',
     };
 
-    const response = await request(app)
+    const res = await request(app)
       .post('/api/auth/signup')
       .send(newUser);
 
-    expect(response.statusCode).toBe(201);
-    expect(response.body).toHaveProperty('token');
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('token');
 
-    const savedUser = await User.findOne({ email: 'testuser@gmail.com' });
-    expect(savedUser).not.toBeNull();
-    expect(savedUser.defaultCurrency).toBe('USD');
-    expect(savedUser.isSetupComplete).toBe(false);
+    const storedUser = await User.findOne({ email: newUser.email });
+    expect(storedUser).not.toBeNull();
+    expect(storedUser.defaultCurrency).toBe('USD');
+    expect(storedUser.isSetupComplete).toBe(false);
   });
 
-  it('should allow user to complete setup', async () => {
-    // First create a user
-    const newUser = {
+  it('allows user to complete their setup preferences', async () => {
+    const userBody = {
       email: 'testuser@gmail.com',
       password: 'Password123!',
     };
 
-    const signupResponse = await request(app)
+    const signupRes = await request(app)
       .post('/api/auth/signup')
-      .send(newUser);
+      .send(userBody);
 
-    const token = signupResponse.body.token;
+    const token = signupRes.body.token;
 
-    // Complete setup
-    const setupResponse = await request(app)
+    const setupRes = await request(app)
       .put('/api/auth/setup')
       .set('Authorization', `Bearer ${token}`)
       .send({ defaultCurrency: 'EUR' });
 
-    expect(setupResponse.statusCode).toBe(200);
-    expect(setupResponse.body.defaultCurrency).toBe('EUR');
-    expect(setupResponse.body.isSetupComplete).toBe(true);
+    expect(setupRes.statusCode).toBe(200);
+    expect(setupRes.body.defaultCurrency).toBe('EUR');
+    expect(setupRes.body.isSetupComplete).toBe(true);
 
-    // Verify user was updated in database
-    const updatedUser = await User.findOne({ email: 'testuser@gmail.com' });
-    expect(updatedUser.defaultCurrency).toBe('EUR');
-    expect(updatedUser.isSetupComplete).toBe(true);
+    const updated = await User.findOne({ email: userBody.email });
+    expect(updated.defaultCurrency).toBe('EUR');
+    expect(updated.isSetupComplete).toBe(true);
   });
 
-  it('should require authentication for setup endpoint', async () => {
-    const response = await request(app)
+  it('blocks access to setup API if no token is provided', async () => {
+    const res = await request(app)
       .put('/api/auth/setup')
       .send({ defaultCurrency: 'EUR' });
 
-    expect(response.statusCode).toBe(401);
+    expect(res.statusCode).toBe(401);
   });
 
-  it('should require defaultCurrency in setup request', async () => {
-    const newUser = {
+  it('returns an error if defaultCurrency is missing', async () => {
+    const user = {
       email: 'testuser@gmail.com',
       password: 'Password123!',
     };
 
-    const signupResponse = await request(app)
+    const signupRes = await request(app)
       .post('/api/auth/signup')
-      .send(newUser);
+      .send(user);
 
-    const token = signupResponse.body.token;
+    const token = signupRes.body.token;
 
-    const setupResponse = await request(app)
+    const res = await request(app)
       .put('/api/auth/setup')
       .set('Authorization', `Bearer ${token}`)
       .send({});
 
-    expect(setupResponse.statusCode).toBe(400);
-    expect(setupResponse.body.message).toBe('Default currency is required');
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Default currency is required');
   });
 
-  it('should allow a new user to sign up', async () => {
-    const newUser = {
-      email: 'testuser@gmail.com',
-      password: 'Password123!',
-    };
-
-    const response = await request(app).post('/api/auth/signup').send(newUser);
-
-    expect(response.statusCode).toBe(201);
-    expect(response.body).toHaveProperty('token');
-
-    const savedUser = await User.findOne({ email: 'testuser@gmail.com' });
-    expect(savedUser).not.toBeNull();
-  });
-
-  it('should reject signup with an existing email', async () => {
-    const testUser = {
+  it('does not allow duplicate email registration', async () => {
+    const user = {
       email: 'duplicate@gmail.com',
       password: 'Password123!',
     };
 
-    await request(app).post('/api/auth/signup').send(testUser).expect(201);
+    await request(app).post('/api/auth/signup').send(user).expect(201);
 
-    const response = await request(app)
+    const res = await request(app)
       .post('/api/auth/signup')
-      .send(testUser)
+      .send(user)
       .expect(400);
 
-    expect(response.body.message).toBe('User already exists');
+    expect(res.body.message).toBe('User already exists');
 
-    const users = await User.find({ email: testUser.email });
-    expect(users.length).toBe(1);
+    const count = await User.countDocuments({ email: user.email });
+    expect(count).toBe(1);
   });
 
-  it('should reject signup when email is missing', async () => {
-    const missingEmailUser = {
-      email: "",
-      password: 'Password123!',
-    };
-
-    const response = await request(app)
+  it('rejects signup when email field is empty', async () => {
+    const res = await request(app)
       .post('/api/auth/signup')
-      .send(missingEmailUser)
+      .send({ email: '', password: 'Password123!' })
       .expect(400);
 
-    expect(response.body.message).toBe('Please enter all fields');
+    expect(res.body.message).toBe('Please enter all fields');
 
     const users = await User.find({});
     expect(users.length).toBe(0);
   });
 
-  it('should reject signup when password is missing', async () => {
-    const missingPasswordUser = {
-      email: 'user@example.com',
-      password: "",
-    };
-
-    const response = await request(app)
+  it('rejects signup when password field is empty', async () => {
+    const res = await request(app)
       .post('/api/auth/signup')
-      .send(missingPasswordUser)
+      .send({ email: 'user@example.com', password: '' })
       .expect(400);
 
-    expect(response.body.message).toBe('Please enter all fields');
+    expect(res.body.message).toBe('Please enter all fields');
 
     const users = await User.find({});
     expect(users.length).toBe(0);
   });
+
 });
